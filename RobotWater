@@ -1,0 +1,62 @@
+
+
+#define trigPin 13
+#define echoPin 12
+#define cupSensorEcho 11
+#define cupSensorTrigger 10
+#define motorPin 9
+long duration = 0;
+long distance = 0;
+long cupDuration = 0;
+long cupDistance = 6;
+
+void setup() {
+  Serial.begin (9600);
+  pinMode(trigPin, OUTPUT);
+  pinMode(echoPin, INPUT);
+  pinMode(cupSensorTrigger, OUTPUT);
+  pinMode(cupSensorEcho, INPUT);
+  pinMode(motorPin, OUTPUT);
+  digitalWrite(motorPin,HIGH);
+
+  
+}
+
+void loop() {
+  if(cupDistance < 5){
+    if(distance > 5){
+       digitalWrite(motorPin,LOW);
+    }
+    else{
+      digitalWrite(motorPin,HIGH);
+    }
+  }
+  else{
+    digitalWrite(motorPin,HIGH);
+  }
+
+  
+  digitalWrite(cupSensorTrigger, LOW);  // Added this line
+  delayMicroseconds(2); // Added this line
+  digitalWrite(cupSensorTrigger, HIGH);
+  delayMicroseconds(10); // Added this line
+  digitalWrite(cupSensorTrigger, LOW);
+  cupDuration = pulseIn(cupSensorEcho, HIGH);
+  cupDistance = (cupDuration/2) / 29.1;
+  Serial.print(cupDistance);
+  Serial.println("cup cm");
+  if (cupDistance > 500){
+    cupDistance = 1;
+  }
+ 
+  digitalWrite(trigPin, LOW);  // Added this line
+  delayMicroseconds(2); // Added this line
+  digitalWrite(trigPin, HIGH);
+  delayMicroseconds(10); // Added this line
+  digitalWrite(trigPin, LOW);
+  duration = pulseIn(echoPin, HIGH);
+  distance = (duration/2) / 29.1;
+  Serial.print(distance);
+  Serial.println("water cm");
+
+}
